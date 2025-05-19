@@ -1,21 +1,16 @@
 {
-    "frame": {
-        "version": "1",
-        "name": "Blackjack Game",
-        "iconUrl": "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreib5h3hxslthviq4g4jryegukljqnhtvdzjr27tw5bmx5adpkejj4i",
-        "homeUrl": "/",
-        "splashImageUrl": "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreibgm2wyws6ozfxzd6lkodxmkvipx2xjgafimsmdjhzx2hgxys74gy",
-        "buttonTitle": "🚩 Start",
-        "splashBackgroundColor": "#1a1a1a",
-        "subtitle": "Play Blackjack on Warpcast",
-        "description": "A fun and interactive Blackjack game where you can play against the dealer and win rewards.",
-        "primaryCategory": "games",
-        "tags": [
-            "blackjack",
-            "gambling",
-            "games",
-            "cards"
-        ],
-        "noindex": false
-    }
+  "frame": {
+    "version": "1",
+    "name": "Blackjack Game",
+    "iconUrl": "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreib5h3hxslthviq4g4jryegukljqnhtvdzjr27tw5bmx5adpkejj4i",
+    "homeUrl": "https://blackjack-game-blue-five.vercel.app/home",
+    "splashImageUrl": "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreibgm2wyws6ozfxzd6lkodxmkvipx2xjgafimsmdjhzx2hgxys74gy",
+    "buttonTitle": "🚩 Start",
+    "splashBackgroundColor": "#1a1a1a",
+    "subtitle": "Play Blackjack on Warpcast",
+    "description": "A fun and interactive Blackjack game where you can play against the dealer and win rewards.",
+    "primaryCategory": "games",
+    "tags": ["blackjack", "gambling", "games", "cards"],
+    "noindex": false
+  }
 }
