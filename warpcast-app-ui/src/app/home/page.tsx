@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useEffect, useState, useRef } from "react";
 import { useAccount, useWalletClient, useConnect } from "wagmi";
 import { parseEther, getContract, createPublicClient, http } from "viem";
@@ -6,7 +6,7 @@ import { abi, BLACKJACK_ADDRESS } from "@/lib/blackjackAbi";
 import { monadTestnet } from "wagmi/chains";
 import Image from "next/image";
 
-// const BLACKJACK_ADDRESS = "0x5783E7eC4ef5e3a1FC69B543a85dAB18F659C059"; 
+const BLACKJACK_ADDRESS_1 = "0x5783E7eC4ef5e3a1FC69B543a85dAB18F659C059";
 
 // Create a public client for read-only calls
 const publicClient = createPublicClient({
@@ -24,7 +24,12 @@ const blackjackRead = getContract({
 function getRandomBytes32Hex() {
   const arr = new Uint8Array(32);
   window.crypto.getRandomValues(arr);
-  return '0x' + Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+  return (
+    "0x" +
+    Array.from(arr)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("")
+  );
 }
 
 // Helper to map card value to image filename
@@ -81,22 +86,25 @@ export default function Home() {
   // Use wallet client for write calls
   const blackjack = walletClient
     ? getContract({
-      address: BLACKJACK_ADDRESS,
-      abi,
-      client: walletClient,
-    })
+        address: BLACKJACK_ADDRESS,
+        abi,
+        client: walletClient,
+      })
     : null;
 
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
-
-
   // Poll game state for up to 60 seconds after a tx
-  const pollGameState = async (address: string, blackjackRead: any, checkAlive: boolean) => {
+  const pollGameState = async (
+    address: string,
+    blackjackRead: any,
+    checkAlive: boolean
+  ) => {
     setError(null);
     let tries = 0;
     let lastState = null;
-    while (tries < 5) { // 30 tries, 2s each = 60s
+    while (tries < 5) {
+      // 30 tries, 2s each = 60s
       try {
         const state = await blackjackRead.read.getGameState([address]);
         console.log(`[POLL] Try ${tries + 1}: gameState=`, state);
@@ -108,7 +116,7 @@ export default function Home() {
       } catch (err) {
         console.error("[POLL] Error fetching gameState:", err);
       }
-      await new Promise(res => setTimeout(res, 2000));
+      await new Promise((res) => setTimeout(res, 2000));
       tries++;
     }
     return lastState;
@@ -116,66 +124,82 @@ export default function Home() {
 
   // Start Game with polling
   const startGameWithPolling = async () => {
-
-
-
     setStatus("Starting game...");
     setError(null);
     if (!blackjack || !address) {
       setError("Wallet or contract not ready.");
-      console.error("[ERROR] Wallet or contract not ready.", { blackjack, address });
+      console.error("[ERROR] Wallet or contract not ready.", {
+        blackjack,
+        address,
+      });
       return;
     }
     try {
       const randomHex = getRandomBytes32Hex();
       if (!randomHex) throw new Error("Failed to generate randomness");
-      const fee = await blackjackRead.read.getFee() as bigint;
+      const fee = (await blackjackRead.read.getFee()) as bigint;
       console.log("[LOG] Fee from contract:", fee.toString());
       const bet = parseEther("1");
       const total_value = bet + fee;
-      console.log("[LOG] Bet:", bet.toString(), "Total value (bet+fee):", total_value.toString());
+      console.log(
+        "[LOG] Bet:",
+        bet.toString(),
+        "Total value (bet+fee):",
+        total_value.toString()
+      );
       let tx;
       try {
-        console.log('randomHex', randomHex);
-        console.log('resetting game');
+        console.log("randomHex", randomHex);
+        console.log("resetting game");
         setGameState(null);
         // await blackjack.write.resetGame(); // TODO: uncomment this
-        console.log('reset game done');
-        console.log('starting game');
+        console.log("reset game done");
+        console.log("starting game");
 
-        console.log('simulating transaction');
+        console.log("simulating transaction");
 
         // Simulate the transaction
         try {
-          await blackjackRead.simulate.startGame([randomHex], { value: total_value, account: address });
-
+          await blackjackRead.simulate.startGame([randomHex], {
+            value: total_value,
+            account: address,
+          });
         } catch (error: any) {
-          console.log('error', error);
+          console.log("error", error);
 
-          const errorString = error?.error?.message || error?.reason || error?.message || "unknown error";
+          const errorString =
+            error?.error?.message ||
+            error?.reason ||
+            error?.message ||
+            "unknown error";
           let userError = "";
           if (errorString.toLowerCase().includes("insufficient balance")) {
-            userError = "Insufficient funds. Please add more MON to your wallet.";
+            userError =
+              "Insufficient funds. Please add more MON to your wallet.";
           } else if (errorString.toLowerCase().includes("user rejected")) {
             userError = "Transaction rejected by user.";
           } else if (errorString.toLowerCase().includes("revert")) {
-            userError = "Contract reverted. Please check your bet and try again.";
+            userError =
+              "Contract reverted. Please check your bet and try again.";
           }
 
           setError(userError);
           return;
         }
 
-        tx = await blackjack.write.startGame([randomHex], { value: total_value });
+        tx = await blackjack.write.startGame([randomHex], {
+          value: total_value,
+        });
         await publicClient.waitForTransactionReceipt({ hash: tx });
         const state = await pollGameState(address, blackjackRead, true);
         console.log("[LOG] Game state after polling:", state);
         setGameState(state);
         setStatus("Game started!");
-        console.log('start game done');
+        console.log("start game done");
       } catch (err: any) {
         console.error("[ERROR] Transaction send failed:", err);
-        const errorString = err?.error?.message || err?.reason || err?.message || "unknown error";
+        const errorString =
+          err?.error?.message || err?.reason || err?.message || "unknown error";
         let userError = "";
         if (errorString.toLowerCase().includes("insufficient balance")) {
           userError = "Insufficient funds. Please add more MON to your wallet.";
@@ -184,7 +208,8 @@ export default function Home() {
         } else if (errorString.toLowerCase().includes("revert")) {
           userError = "Contract reverted. Please check your bet and try again.";
         } else if (errorString.toLowerCase().includes("network")) {
-          userError = "Network error. Please check your connection and try again.";
+          userError =
+            "Network error. Please check your connection and try again.";
         } else {
           userError = `❌ Transaction failed: ${errorString}`;
         }
@@ -214,32 +239,42 @@ export default function Home() {
     setError(null);
     if (!blackjack || !address) {
       setError("Wallet or contract not ready.");
-      console.error("[ERROR] Wallet or contract not ready.", { blackjack, address });
+      console.error("[ERROR] Wallet or contract not ready.", {
+        blackjack,
+        address,
+      });
       setIsDrawing(false);
       return;
     }
     try {
       const randomHex = getRandomBytes32Hex();
       if (!randomHex) throw new Error("Failed to generate randomness");
-      const fee = await blackjackRead.read.getFee() as bigint;
+      const fee = (await blackjackRead.read.getFee()) as bigint;
       console.log("[LOG] Fee from contract:", fee.toString());
       let tx;
       try {
-
         try {
-          await blackjackRead.simulate.drawCard([randomHex], { value: fee, account: address });
-
+          await blackjackRead.simulate.drawCard([randomHex], {
+            value: fee,
+            account: address,
+          });
         } catch (error: any) {
-          console.log('error', error);
+          console.log("error", error);
 
-          const errorString = error?.error?.message || error?.reason || error?.message || "unknown error";
+          const errorString =
+            error?.error?.message ||
+            error?.reason ||
+            error?.message ||
+            "unknown error";
           let userError = "";
           if (errorString.toLowerCase().includes("insufficient balance")) {
-            userError = "Insufficient funds. Please add more MON to your wallet.";
+            userError =
+              "Insufficient funds. Please add more MON to your wallet.";
           } else if (errorString.toLowerCase().includes("user rejected")) {
             userError = "Transaction rejected by user.";
           } else if (errorString.toLowerCase().includes("revert")) {
-            userError = "Contract reverted. Please check your bet and try again.";
+            userError =
+              "Contract reverted. Please check your bet and try again.";
           } else if (errorString.toLowerCase().includes("Blackjack already")) {
             userError = "Blackjack already. Please start a new game.";
           } else if (errorString.toLowerCase().includes("No active game")) {
@@ -259,7 +294,8 @@ export default function Home() {
         await publicClient.waitForTransactionReceipt({ hash: tx });
       } catch (err: any) {
         console.error("[ERROR] Transaction send failed:", err);
-        const errorString = err?.error?.message || err?.reason || err?.message || "unknown error";
+        const errorString =
+          err?.error?.message || err?.reason || err?.message || "unknown error";
         let userError = "";
         if (errorString.toLowerCase().includes("insufficient balance")) {
           userError = "Insufficient funds. Please add more MON to your wallet.";
@@ -305,15 +341,17 @@ export default function Home() {
     if (!blackjack) return;
     setIsResetting(true);
     try {
-
       // Simulate the transaction
       try {
         await blackjackRead.simulate.resetGame({ account: address });
-
       } catch (error: any) {
-        console.log('error', error);
+        console.log("error", error);
 
-        const errorString = error?.error?.message || error?.reason || error?.message || "unknown error";
+        const errorString =
+          error?.error?.message ||
+          error?.reason ||
+          error?.message ||
+          "unknown error";
         let userError = "";
         if (errorString.toLowerCase().includes("insufficient balance")) {
           userError = "Insufficient funds. Please add more MON to your wallet.";
@@ -334,7 +372,8 @@ export default function Home() {
       setGameState(null);
     } catch (err: any) {
       console.error("[ERROR] Reset game failed:", err);
-      const errorString = err?.error?.message || err?.reason || err?.message || "unknown error";
+      const errorString =
+        err?.error?.message || err?.reason || err?.message || "unknown error";
       let userError = "";
       if (errorString.toLowerCase().includes("user rejected")) {
         userError = "Transaction rejected by user.";
@@ -347,16 +386,25 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen  overflow-hidden flex flex-col items-center justify-center p-4 bg-gradient-to-b from-green-800 to-green-950 font-sans"> {/* TODO: remove h-screen w-screen*/}
+    <div className="min-h-screen  overflow-hidden flex flex-col items-center justify-center p-4 bg-gradient-to-b from-green-800 to-green-950 font-sans">
+      {" "}
+      {/* TODO: remove h-screen w-screen*/}
       <div className="w-full max-w-md rounded-xl shadow-2xl bg-white/90 overflow-hidden flex flex-col items-center relative backdrop-blur-md border border-green-700">
         {/* Header Row */}
         <div className="w-full bg-green-800 text-white px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             {/* <Image src="/cards/10.svg" alt="logo" width={28} height={28} className="drop-shadow-md" /> */}
-            <span className="text-xl font-bold tracking-tight">BlackJack Mini App</span>
+            <span className="text-xl font-bold tracking-tight">
+              BlackJack Mini App
+            </span>
           </div>
           <div className="flex items-center gap-2 bg-yellow-400 text-green-900 px-3 py-1 rounded-full shadow-md">
-            <Image src="/cards/peacock.svg" alt="chips" width={20} height={20} />
+            <Image
+              src="/cards/peacock.svg"
+              alt="chips"
+              width={20}
+              height={20}
+            />
             <span className="font-bold text-sm">{chips} Chips</span>
           </div>
         </div>
@@ -366,7 +414,12 @@ export default function Home() {
           {error && (
             <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4 w-full rounded shadow-sm">
               <div className="flex items-center">
-                <svg className="h-5 w-5 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg
+                  className="h-5 w-5 text-red-500 mr-2"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -382,8 +435,12 @@ export default function Home() {
           {!isConnected ? (
             <div className="flex flex-col items-center justify-center py-10 w-full">
               <div className="mb-6 text-center">
-                <h2 className="text-xl font-bold text-green-900 mb-2">Welcome to BlackJack</h2>
-                <p className="text-green-800">Connect your wallet via Warpcast to start playing</p>
+                <h2 className="text-xl font-bold text-green-900 mb-2">
+                  Welcome to BlackJack
+                </h2>
+                <p className="text-green-800">
+                  Connect your wallet via Warpcast to start playing
+                </p>
               </div>
               <button
                 className="bg-green-800 hover:bg-green-700 text-white font-medium px-8 py-3 rounded-lg shadow-lg transition duration-200 flex items-center gap-2"
@@ -411,12 +468,13 @@ export default function Home() {
               {/* Game Status Banner */}
               {gameState && (
                 <div
-                  className={`w-full mb-6 p-3 rounded-lg text-center font-medium ${gameState[3]
-                    ? "bg-yellow-100 text-yellow-800 border border-yellow-300"
-                    : !gameState[2]
+                  className={`w-full mb-6 p-3 rounded-lg text-center font-medium ${
+                    gameState[3]
+                      ? "bg-yellow-100 text-yellow-800 border border-yellow-300"
+                      : !gameState[2]
                       ? "bg-red-100 text-red-800 border border-red-300"
                       : "bg-green-100 text-green-800 border border-green-300"
-                    }`}
+                  }`}
                 >
                   {getGameMessage(gameState, status)}
                 </div>
@@ -479,7 +537,11 @@ export default function Home() {
                             stroke="currentColor"
                             strokeWidth="4"
                           ></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v8z"
+                          ></path>
                         </svg>
                         Drawing...
                       </span>
@@ -528,7 +590,11 @@ export default function Home() {
                             stroke="currentColor"
                             strokeWidth="4"
                           ></circle>
-                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8v8z"
+                          ></path>
                         </svg>
                         Resetting...
                       </span>
@@ -597,11 +663,19 @@ export default function Home() {
                     {gameState[0].map((card: number, idx: number) => (
                       <div
                         key={idx}
-                        className={`transition-transform duration-500 ${isDrawing && idx === gameState[0].length - 1 ? "animate-bounce" : ""}`}
+                        className={`transition-transform duration-500 ${
+                          isDrawing && idx === gameState[0].length - 1
+                            ? "animate-bounce"
+                            : ""
+                        }`}
                         style={{
-                          transform: `rotate(${(idx - (gameState[0].length - 1) / 2) * 5}deg)`,
+                          transform: `rotate(${
+                            (idx - (gameState[0].length - 1) / 2) * 5
+                          }deg)`,
                           transformOrigin: "bottom center",
-                          marginTop: Math.abs((idx - (gameState[0].length - 1) / 2) * 3),
+                          marginTop: Math.abs(
+                            (idx - (gameState[0].length - 1) / 2) * 3
+                          ),
                         }}
                       >
                         <Image
@@ -618,29 +692,55 @@ export default function Home() {
                   {/* Stats Bar */}
                   <div className="grid grid-cols-3 gap-3 w-full mb-4">
                     <div className="flex flex-col items-center bg-white rounded-lg p-3 shadow-md border border-green-200">
-                      <span className="text-xs text-green-700 font-medium mb-1">Sum</span>
+                      <span className="text-xs text-green-700 font-medium mb-1">
+                        Sum
+                      </span>
                       <span
-                        className={`text-xl font-bold ${gameState[1] > 21 ? "text-red-600" : gameState[1] === 21 ? "text-yellow-600" : "text-green-800"}`}
+                        className={`text-xl font-bold ${
+                          gameState[1] > 21
+                            ? "text-red-600"
+                            : gameState[1] === 21
+                            ? "text-yellow-600"
+                            : "text-green-800"
+                        }`}
                       >
                         {gameState[1]}
                       </span>
                     </div>
                     <div className="flex flex-col items-center bg-white rounded-lg p-3 shadow-md border border-green-200">
-                      <span className="text-xs text-green-700 font-medium mb-1">Status</span>
-                      <span className={`text-sm font-bold ${gameState[2] ? "text-green-600" : "text-red-600"}`}>
+                      <span className="text-xs text-green-700 font-medium mb-1">
+                        Status
+                      </span>
+                      <span
+                        className={`text-sm font-bold ${
+                          gameState[2] ? "text-green-600" : "text-red-600"
+                        }`}
+                      >
                         {gameState[2] ? "Active" : "Game Over"}
                       </span>
                     </div>
                     <div className="flex flex-col items-center bg-white rounded-lg p-3 shadow-md border border-green-200">
-                      <span className="text-xs text-green-700 font-medium mb-1">Blackjack</span>
-                      <span className={`text-sm font-bold ${gameState[3] ? "text-yellow-600" : "text-gray-500"}`}>
+                      <span className="text-xs text-green-700 font-medium mb-1">
+                        Blackjack
+                      </span>
+                      <span
+                        className={`text-sm font-bold ${
+                          gameState[3] ? "text-yellow-600" : "text-gray-500"
+                        }`}
+                      >
                         {gameState[3] ? "Yes!" : "No"}
                       </span>
                     </div>
                   </div>
 
                   <div
-                    className={`text-center text-xl font-bold mt-2 ${gameState[3] ? "text-yellow-600" : !gameState[2] ? "text-red-600" : "text-green-800"}`}
+                    className={`text-center text-xl font-bold mt-2 ${
+                      gameState[3]
+                        ? "text-yellow-600"
+                        : !gameState[2]
+                        ? "text-red-600"
+                        : "text-green-800"
+                    }`}
                   >
                     {getGameMessage(gameState, status)}
                   </div>
@@ -661,14 +761,19 @@ export default function Home() {
         <div className="mt-1">Powered by Warpcast Mini Apps</div>
       </div>
       <style jsx global>{`
-    .animate-bounce {
-      animation: bounce 0.8s;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(5deg) scale(1.1); }
-    }
-  `}</style>
+        .animate-bounce {
+          animation: bounce 0.8s;
+        }
+        @keyframes bounce {
+          0%,
+          100% {
+            transform: translateY(0) rotate(0deg);
+          }
+          50% {
+            transform: translateY(-20px) rotate(5deg) scale(1.1);
+          }
+        }
+      `}</style>
     </div>
   );
 }
