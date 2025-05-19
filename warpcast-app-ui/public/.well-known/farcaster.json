@@ -1,0 +1,21 @@
+{
+    "frame": {
+        "version": "1",
+        "name": "Blackjack Game",
+        "iconUrl": "/images/icon.png",
+        "homeUrl": "/",
+        "splashImageUrl": "/images/splash.png",
+        "buttonTitle": "🚩 Start",
+        "splashBackgroundColor": "#1a1a1a",
+        "subtitle": "Play Blackjack on Warpcast",
+        "description": "A fun and interactive Blackjack game where you can play against the dealer and win rewards.",
+        "primaryCategory": "games",
+        "tags": [
+            "blackjack",
+            "gambling",
+            "games",
+            "cards"
+        ],
+        "noindex": false
+    }
+}

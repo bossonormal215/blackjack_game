@@ -1,0 +1,6 @@
+<svg width="100" height="140" viewBox="0 0 100 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100" height="140" rx="16" fill="#fff" stroke="#34495e" stroke-width="4"/>
+  <text x="36" y="40" font-size="40" font-family="Arial Black, Arial, sans-serif" fill="#34495e" font-weight="bold">9</text>
+  <image href="/cards/peacock.svg" x="30" y="50" height="40" width="40"/>
+  <text x="70" y="130" font-size="40" font-family="Arial Black, Arial, sans-serif" fill="#34495e" font-weight="bold" transform="rotate(180 70,130)">9</text>
+</svg> 
