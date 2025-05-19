@@ -6,7 +6,7 @@ import { abi, BLACKJACK_ADDRESS } from "@/lib/blackjackAbi";
 import { monadTestnet } from "wagmi/chains";
 import Image from "next/image";
 
-const BLACKJACK_ADDRESS_1 = "0x5783E7eC4ef5e3a1FC69B543a85dAB18F659C059";
+// const BLACKJACK_ADDRESS = "0x5783E7eC4ef5e3a1FC69B543a85dAB18F659C059";
 
 // Create a public client for read-only calls
 const publicClient = createPublicClient({
