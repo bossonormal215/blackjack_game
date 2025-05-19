@@ -20,19 +20,5 @@
       "payload": "eyJkb21haW4iOiJibGFja2phY2stZ2FtZS1ibHVlLWZpdmUudmVyY2VsLmFwcCJ9",
       "signature": "MHgyNWE1YjJjYzQzMjc2M2U0YmYxM2E5MmQzYjk4YjA3ZThhZTZmNzVmZWVjMWQzODkyY2ViYWU2ODhhNDM0MzJmMmUzZDdhZjJhZDg2ODAzM2QwZDVlODdiZjAwNWY5ZmUyNjM1M2ZkYmZkMGIzOGZjMzQyNTZjMjE3ZWM5NWQzZTFi"
     }
-  },
-  "app": {
-    "version": "1",
-    "name": "Blackjack Game",
-    "iconUrl": "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreib5h3hxslthviq4g4jryegukljqnhtvdzjr27tw5bmx5adpkejj4i",
-    "homeUrl": "https://blackjack-game-blue-five.vercel.app/home",
-    "splashImageUrl": "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreibgm2wyws6ozfxzd6lkodxmkvipx2xjgafimsmdjhzx2hgxys74gy",
-    "buttonTitle": "🚩 Start",
-    "splashBackgroundColor": "#1a1a1a",
-    "subtitle": "Play Blackjack on Warpcast",
-    "description": "A fun and interactive Blackjack game where you can play against the dealer and win rewards.",
-    "primaryCategory": "games",
-    "tags": ["blackjack", "gambling", "games", "cards"],
-    "noindex": false
   }
 }
