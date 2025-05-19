@@ -13,7 +13,13 @@
     "description": "A fun and interactive Blackjack game where you can play against the dealer and win rewards.",
     "primaryCategory": "games",
     "tags": ["blackjack", "gambling", "games", "cards"],
-    "noindex": false
+    "noindex": false,
+
+    "accountAssociation": {
+      "header": "eyJmaWQiOjEwMDg1OTQsInR5cGUiOiJjdXN0b2R5Iiwia2V5IjoiMHgwMkUyRmNjMzgzRTY5OTZDRENCZGY5RUZmNENFMDc3MDNDY0YxRDMzIn0",
+      "payload": "eyJkb21haW4iOiJibGFja2phY2stZ2FtZS1ibHVlLWZpdmUudmVyY2VsLmFwcCJ9",
+      "signature": "MHgyNWE1YjJjYzQzMjc2M2U0YmYxM2E5MmQzYjk4YjA3ZThhZTZmNzVmZWVjMWQzODkyY2ViYWU2ODhhNDM0MzJmMmUzZDdhZjJhZDg2ODAzM2QwZDVlODdiZjAwNWY5ZmUyNjM1M2ZkYmZkMGIzOGZjMzQyNTZjMjE3ZWM5NWQzZTFi"
+    }
   },
   "app": {
     "version": "1",
