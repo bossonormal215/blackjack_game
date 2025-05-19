@@ -4,6 +4,10 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 First, run the development server:
 
+bug
+// "viem": "^2.29.4",
+    // "wagmi": "^2.15.3"
+
 ```bash
 npm run dev
 # or
