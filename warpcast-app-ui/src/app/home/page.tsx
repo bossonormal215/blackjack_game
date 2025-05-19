@@ -138,16 +138,46 @@ export default function Home() {
       try {
         console.log('randomHex', randomHex);
         console.log('resetting game');
-        await blackjack.write.resetGame(); // TODO: uncomment this
+        setGameState(null);
+        // await blackjack.write.resetGame(); // TODO: uncomment this
         console.log('reset game done');
         console.log('starting game');
+
+        console.log('simulating transaction');
+
+        // Simulate the transaction
+        try {
+          await blackjackRead.simulate.startGame([randomHex], { value: total_value, account: address });
+
+        } catch (error: any) {
+          console.log('error', error);
+
+          const errorString = error?.error?.message || error?.reason || error?.message || "unknown error";
+          let userError = "";
+          if (errorString.toLowerCase().includes("insufficient balance")) {
+            userError = "Insufficient funds. Please add more MON to your wallet.";
+          } else if (errorString.toLowerCase().includes("user rejected")) {
+            userError = "Transaction rejected by user.";
+          } else if (errorString.toLowerCase().includes("revert")) {
+            userError = "Contract reverted. Please check your bet and try again.";
+          }
+
+          setError(userError);
+          return;
+        }
+
         tx = await blackjack.write.startGame([randomHex], { value: total_value });
+        await publicClient.waitForTransactionReceipt({ hash: tx });
+        const state = await pollGameState(address, blackjackRead, true);
+        console.log("[LOG] Game state after polling:", state);
+        setGameState(state);
+        setStatus("Game started!");
         console.log('start game done');
       } catch (err: any) {
         console.error("[ERROR] Transaction send failed:", err);
         const errorString = err?.error?.message || err?.reason || err?.message || "unknown error";
         let userError = "";
-        if (errorString.toLowerCase().includes("insufficient funds")) {
+        if (errorString.toLowerCase().includes("insufficient balance")) {
           userError = "Insufficient funds. Please add more MON to your wallet.";
         } else if (errorString.toLowerCase().includes("user rejected")) {
           userError = "Transaction rejected by user.";
@@ -195,20 +225,51 @@ export default function Home() {
       console.log("[LOG] Fee from contract:", fee.toString());
       let tx;
       try {
+
+        try {
+          await blackjackRead.simulate.drawCard([randomHex], { value: fee, account: address });
+
+        } catch (error: any) {
+          console.log('error', error);
+
+          const errorString = error?.error?.message || error?.reason || error?.message || "unknown error";
+          let userError = "";
+          if (errorString.toLowerCase().includes("insufficient balance")) {
+            userError = "Insufficient funds. Please add more MON to your wallet.";
+          } else if (errorString.toLowerCase().includes("user rejected")) {
+            userError = "Transaction rejected by user.";
+          } else if (errorString.toLowerCase().includes("revert")) {
+            userError = "Contract reverted. Please check your bet and try again.";
+          } else if (errorString.toLowerCase().includes("Blackjack already")) {
+            userError = "Blackjack already. Please start a new game.";
+          } else if (errorString.toLowerCase().includes("No active game")) {
+            userError = "No active game. Please start a new game.";
+          } else if (errorString.toLowerCase().includes("insufficient fee")) {
+            userError = "Insufficient fee. Please add more MON to your wallet.";
+          } else {
+            userError = `❌ Transaction failed: ${errorString}`;
+          }
+
+          setError(userError);
+          setIsDrawing(false);
+          return;
+        }
+
         tx = await blackjack.write.drawCard([randomHex], { value: fee });
+        await publicClient.waitForTransactionReceipt({ hash: tx });
       } catch (err: any) {
         console.error("[ERROR] Transaction send failed:", err);
         const errorString = err?.error?.message || err?.reason || err?.message || "unknown error";
         let userError = "";
-        if (errorString.toLowerCase().includes("insufficient funds")) {
+        if (errorString.toLowerCase().includes("insufficient balance")) {
           userError = "Insufficient funds. Please add more MON to your wallet.";
         } else if (errorString.toLowerCase().includes("user rejected")) {
           userError = "Transaction rejected by user.";
         } else if (errorString.toLowerCase().includes("revert")) {
           userError = "Contract reverted. Please check your bet and try again.";
-        } else if (errorString.toLowerCase().includes("network")) {
-          userError = "Network error. Please check your connection and try again.";
-        } else {
+        } else if (errorString.toLowerCase().includes("No active game")) {
+          userError = "No active game, Start a new game first";
+        } else if (errorString.toLowerCase().includes("Blackjack already")) {
           userError = `❌ Transaction failed: ${errorString}`;
         }
         setError(userError);
@@ -244,7 +305,31 @@ export default function Home() {
     if (!blackjack) return;
     setIsResetting(true);
     try {
-      await blackjack.write.resetGame();
+
+      // Simulate the transaction
+      try {
+        await blackjackRead.simulate.resetGame({ account: address });
+
+      } catch (error: any) {
+        console.log('error', error);
+
+        const errorString = error?.error?.message || error?.reason || error?.message || "unknown error";
+        let userError = "";
+        if (errorString.toLowerCase().includes("insufficient balance")) {
+          userError = "Insufficient funds. Please add more MON to your wallet.";
+        } else if (errorString.toLowerCase().includes("user rejected")) {
+          userError = "Transaction rejected by user.";
+        } else if (errorString.toLowerCase().includes("revert")) {
+          userError = "Contract reverted. Please check your bet and try again.";
+        }
+
+        setError(userError);
+        setIsResetting(false);
+        return;
+      }
+
+      const tx = await blackjack.write.resetGame();
+      await publicClient.waitForTransactionReceipt({ hash: tx });
       setStatus("Game reset. You can start a new game.");
       setGameState(null);
     } catch (err: any) {

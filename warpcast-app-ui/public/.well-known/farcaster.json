@@ -2,9 +2,9 @@
     "frame": {
         "version": "1",
         "name": "Blackjack Game",
-        "iconUrl": "/images/icon.png",
+        "iconUrl": "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreib5h3hxslthviq4g4jryegukljqnhtvdzjr27tw5bmx5adpkejj4i",
         "homeUrl": "/",
-        "splashImageUrl": "/images/splash.png",
+        "splashImageUrl": "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreibgm2wyws6ozfxzd6lkodxmkvipx2xjgafimsmdjhzx2hgxys74gy",
         "buttonTitle": "🚩 Start",
         "splashBackgroundColor": "#1a1a1a",
         "subtitle": "Play Blackjack on Warpcast",
