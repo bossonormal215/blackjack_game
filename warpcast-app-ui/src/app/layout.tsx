@@ -42,9 +42,10 @@ export const metadata: Metadata = {
         action: {
           type: "launch_frame",
           url: "https://blackjack-game-blue-five.vercel.app/home",
-          name: "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreibgm2wyws6ozfxzd6lkodxmkvipx2xjgafimsmdjhzx2hgxys74gy",
+          name: "Blackjack Game",
 
-          splashImageUrl: "/images/splash.png",
+          splashImageUrl:
+            "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreibgm2wyws6ozfxzd6lkodxmkvipx2xjgafimsmdjhzx2hgxys74gy",
           splashBackgroundColor: "#1a1a1a",
         },
       },
