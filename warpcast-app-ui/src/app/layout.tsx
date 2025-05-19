@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     description: "Play Blackjack on Warpcast - A fun and interactive card game",
     images: [
       {
-        url: "/images/og-image.png",
+        url: "https://blackjack-game-blue-five.vercel.app/home",
         width: 1200,
         height: 630,
         alt: "Blackjack Game",
@@ -35,19 +35,21 @@ export const metadata: Metadata = {
   other: {
     "fc:frame": JSON.stringify({
       version: "next",
-      imageUrl: "/images/og-image.png",
+      imageUrl:
+        "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreib5h3hxslthviq4g4jryegukljqnhtvdzjr27tw5bmx5adpkejj4i",
       button: {
         title: "🎮 Play Now",
         action: {
           type: "launch_frame",
-          url: "/",
-          name: "Blackjack Game",
+          url: "https://blackjack-game-blue-five.vercel.app/home",
+          name: "https://amethyst-conscious-vole-978.mypinata.cloud/ipfs/bafkreibgm2wyws6ozfxzd6lkodxmkvipx2xjgafimsmdjhzx2hgxys74gy",
+
           splashImageUrl: "/images/splash.png",
-          splashBackgroundColor: "#1a1a1a"
-        }
-      }
-    })
-  }
+          splashBackgroundColor: "#1a1a1a",
+        },
+      },
+    }),
+  },
 };
 
 export default function RootLayout({
